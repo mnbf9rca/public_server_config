@@ -5,7 +5,8 @@ if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 # install authorized_keys
 #
 # FIRST, DOWNLOAD AUTHORIZED_KEYS
-# https://github.com/mnbf9rca/server-config/raw/master/authorized_keys
+wget -Oauthorized_keys https://raw.githubusercontent.com/mnbf9rca/public_server_config/master/authorized_keys
+
 #
 
 echo Installing keys
@@ -27,6 +28,7 @@ systemctl reload sshd
 # install automatic updates
 echo enable auto updates
 echo ... installing
+wget -O10periodic https://raw.githubusercontent.com/mnbf9rca/public_server_config/master/10periodic
 apt-get update
 apt-get upgrade -y
 apt-get install -y unattended-upgrades apt-transport-https ca-certificates
