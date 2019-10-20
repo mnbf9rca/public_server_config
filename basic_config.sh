@@ -30,7 +30,7 @@ apt-get update
 apt-get dist-upgrade --autoremove --no-install-recommends --assume-yes
 # install other useful apps
 echo installing other apps
-apt-get install -y nano open-vm-tools nfs-common
+apt-get install -y nano open-vm-tools nfs-common curl
 
 # install automatic updates
 echo enable auto updates
