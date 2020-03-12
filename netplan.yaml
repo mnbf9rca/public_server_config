@@ -1,0 +1,17 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    ens0:
+      addresses: [ ]
+      dhcp4: true
+      dhcp6: true
+      match:
+        name: eth0
+  vlans:
+    vlan.3000:
+      id: 3000
+      link: ens0
+      addresses: [  ]
+      dhcp4: true
+      dhcp6: true
