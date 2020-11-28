@@ -37,7 +37,7 @@ echo enable auto updates
 echo ... installing
 wget -O10periodic https://raw.githubusercontent.com/mnbf9rca/public_server_config/master/10periodic
 
-apt-get install -y unattended-upgrades apt-transport-https ca-certificates
+apt-get install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 echo ... setting timing
 sed -i 's|^//[ \t]\"\${distro_id}:\${distro_codename}-updates\"|"\${distro_id}:\${distro_codename}-updates\"|g' /etc/apt/apt.conf.d/50unattended-upgrades
 sed -i 's|^//[ \t]*Unattended-Upgrade::Automatic-Reboot \"false\";|Unattended-Upgrade::Automatic-Reboot \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
