@@ -16,4 +16,11 @@ if [ -z "${username}" ] || [ -z "${password}" ]; then
     usage
 fi
 
+# create user
+echo "Creating user $username"
+useradd --create-home --password $password $username
+retVal=$?
+[[ $retVal -ne 0 ]] && {echo "... operation failed, error code $retVal"; exit 1}
+
+
 echo ... done
