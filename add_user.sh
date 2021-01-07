@@ -28,8 +28,21 @@ if [ -z "${githubuser}" ] || [ -z "${username}" ] || [ -z "${password}" ]; then
 fi
 
 echo "Testing keys for github user $githubuser"
-wget --delete-after --no-cache https://github.com/${githubuser}.keys
+echo "... getting temp file"
+tmpfile=$(mktemp)
 checkerror $?
+echo "... downloading keys"
+wget -O$tmpfile --no-cache https://github.com/${githubuser}.keys
+checkerror $?
+if [[ ! -s $tmpfile ]] 
+then
+    echo "... downloaded empty file for user - check https://github.com/${githubuser}.keys"
+    rm $tmpfile
+    exit 1
+else
+    rm $tmpfile
+    checkerror $?
+fi
 
 # create user
 echo "Creating user $username"
