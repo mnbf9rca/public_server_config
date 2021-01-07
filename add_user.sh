@@ -26,12 +26,6 @@ if [ -z "${username}" ] || [ -z "${password}" ]; then
     usage
 fi
 
-echo enabling cert auth
-sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
-checkerror $?
-
-sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
-checkerror $?
 
 # create user
 echo "Creating user $username"
@@ -74,6 +68,19 @@ checkerror $?
 
 echo "... key secured"
 
+echo "enabling cert auth"
+sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
+checkerror $?
+
+sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
+checkerror $?
+
+echo disabling password auth
+sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+checkerror $?
+
+
+echo "reloading sshd"
 systemctl reload sshd
 checkerror $?
 
