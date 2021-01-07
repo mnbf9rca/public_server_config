@@ -36,7 +36,9 @@ echo "Adding $username to sudo group"
 usermod -aG sudo $username
 checkerror $?
 
-echo "Creating $username/.ssh"
+userhome = ~$username
+echo "{$userhome}"
+echo "Creating ~$username/.ssh"
 mkdir ~$username/.ssh
 checkerror $?
 
