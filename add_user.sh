@@ -3,7 +3,8 @@
 usage() { echo "Usage: $0 -u <username> -p <password>" 1>&2; exit 1; }
 
 function checkerror() {
-   [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
+    retval = $?
+   [[ $retval -ne 0 ]] && { echo "... operation failed, error code {$retval}"; exit 1 ; } 
 }
 
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
@@ -25,7 +26,7 @@ hashed = mak
 # create user
 echo "Creating user $username"
 adduser --gecos "" --disabled-password $username
-checkerror $?
+checkerror
 
 echo "setting password"
 echo "{$username}":"{$password}" | chpasswd -e
