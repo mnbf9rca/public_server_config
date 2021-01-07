@@ -9,7 +9,7 @@ do
         u) username=${OPTARG};;
     esac
 done
-if [ -z "$var" ];
+if [ -z "$username" ];
 then
     echo "set -u flag"
     exit 1
