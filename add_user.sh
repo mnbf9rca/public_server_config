@@ -21,7 +21,12 @@ if [ -z "${username}" ] || [ -z "${password}" ]; then
     usage
 fi
 
-hashed = mak
+echo enabling cert auth
+sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
+checkerror $?
+
+sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
+checkerror $?
 
 # create user
 echo "Creating user $username"
@@ -36,36 +41,33 @@ echo "Adding $username to sudo group"
 usermod -aG sudo $username
 checkerror $?
 
-userhome = eval echo "~$username"
-echo "{$userhome}"
-echo "Creating $userhome/.ssh"
-mkdir $userhome/.ssh
+echo "switching to $username"
+su - $username
+checkerror $?
+
+echo "home in {$HOME}"
+echo "Creating ~/.ssh"
+mkdir ~/.ssh
 checkerror $?
 
 echo "downloading ssh keys"
-wget -O~$username/.ssh/authorized_keys https://github.com/mnbf9rca.keys
+wget -O~/.ssh/authorized_keys https://github.com/mnbf9rca.keys
 checkerror $?
 
 echo "... key saved"
 echo "... chown"
-chown -R $username:$username ~$username/.ssh
+chown -R $username:$username ~/.ssh
 checkerror $?
 
 echo "... chmod folder"
-chmod 700 ~$username/.ssh
+chmod 700 ~/.ssh
 checkerror $?
 
 echo "... chmod key"
-chmod 600 ~$username/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 checkerror $?
 
 echo "... key secured"
-echo enabling cert auth
-sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
-checkerror $?
-
-sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
-checkerror $?
 
 systemctl reload sshd
 checkerror $?
