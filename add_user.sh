@@ -23,12 +23,12 @@ echo "Creating user $username"
 adduser --gecos "" --disabled-password $username
 retVal=$?
 echo "return {$retVal}"
-[[ $retVal -ne 0 ]] && {echo "... operation failed, error code {$retVal}"; exit 1}
+[[ $retVal -ne 0 ]] && { echo "... operation failed, error code {$retVal}"; exit 1 }
 
 echo "setting password"
 echo "{$username}":"{$password}" | chpasswd -e
 retVal=$?
 echo "return {$retVal}"
-[[ $retVal -ne 0 ]] && {echo "... operation failed, error code {$retVal}"; exit 1}
+[[ $retVal -ne 0 ]] && { echo "... operation failed, error code {$retVal}"; exit 1 }
 
 echo ... done
