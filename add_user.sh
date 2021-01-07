@@ -7,6 +7,11 @@ function checkerror() {
    [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
 }
 
+get_home() {
+  local result; result="$(getent passwd "$1")" || return
+  echo $result | cut -d : -f 6
+}
+
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 
 while getopts "u:p:" flag; do
@@ -42,12 +47,11 @@ usermod -aG sudo $username
 checkerror $?
 
 echo "getting home dir for $username"
-HOMEDIR = getent passwd rob | cut -d: -f6
-echo "$HOMEDIR"
+HOMEDIR="$(get_home $username)"
 checkerror $?
 
-echo "home in {$HOME}"
-echo "Creating ~/.ssh"
+echo "home in {$HOMEDIR}"
+echo "Creating $HOMEDIR/.ssh"
 mkdir $HOMEDIR/.ssh
 checkerror $?
 
