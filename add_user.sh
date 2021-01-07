@@ -41,40 +41,36 @@ echo "Adding $username to sudo group"
 usermod -aG sudo $username
 checkerror $?
 
-echo "switching to $username"
-su - $username
+echo "getting home dir for $username"
+HOMEDIR = getent passwd rob | cut -d: -f6
+echo "$HOMEDIR"
 checkerror $?
 
 echo "home in {$HOME}"
 echo "Creating ~/.ssh"
-mkdir ~/.ssh
+mkdir $HOMEDIR/.ssh
 checkerror $?
 
 echo "downloading ssh keys"
-wget -O~/.ssh/authorized_keys https://github.com/mnbf9rca.keys
+wget -O$HOMEDIR/.ssh/authorized_keys https://github.com/mnbf9rca.keys
 checkerror $?
 
 echo "... key saved"
 echo "... chown"
-chown -R $username:$username ~/.ssh
+chown -R $username:$username $HOMEDIR/.ssh
 checkerror $?
 
 echo "... chmod folder"
-chmod 700 ~/.ssh
+chmod 700 $HOMEDIR/.ssh
 checkerror $?
 
 echo "... chmod key"
-chmod 600 ~/.ssh/authorized_keys
+chmod 600 $HOMEDIR/.ssh/authorized_keys
 checkerror $?
 
 echo "... key secured"
 
 systemctl reload sshd
 checkerror $?
-
-
-
-
-
 
 echo ... done
