@@ -38,8 +38,8 @@ checkerror $?
 
 userhome = ~$username
 echo "{$userhome}"
-echo "Creating ~$username/.ssh"
-mkdir ~$username/.ssh
+echo "Creating $userhome/.ssh"
+mkdir $userhome/.ssh
 checkerror $?
 
 echo "downloading ssh keys"
