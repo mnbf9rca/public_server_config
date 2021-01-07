@@ -3,7 +3,7 @@
 usage() { echo "Usage: $0 -u <username> -p <password>" 1>&2; exit 1; }
 
 function checkerror{
-   [ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
+   [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
 }
 
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
