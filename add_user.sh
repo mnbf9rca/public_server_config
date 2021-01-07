@@ -2,7 +2,7 @@
 
 usage() { echo "Usage: $0 -u <username> -p <password>" 1>&2; exit 1; }
 
-function checkerror{
+function checkerror() {
    [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
 }
 
