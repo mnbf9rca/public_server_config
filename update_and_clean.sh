@@ -28,3 +28,5 @@ checkerror $?
 echo "installing other apps"
 apt install -y nano curl
 checkerror $?
+
+echo "remember to set up UFW"
