@@ -10,8 +10,9 @@ if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 # install automatic updates
 echo "enable auto updates"
 echo "... installing"
-
-apt-get install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
+apt update
+checkerror $?
+apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 checkerror $?
 echo ... creating config file
 configfile="/etc/apt/apt.conf.d/10periodic"
