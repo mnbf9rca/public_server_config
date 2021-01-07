@@ -20,6 +20,7 @@ fi
 echo "Creating user $username"
 useradd --create-home --password $password $username
 retVal=$?
+echo "return {$retVal}"
 [[ $retVal -ne 0 ]] && {echo "... operation failed, error code $retVal"; exit 1}
 
 
