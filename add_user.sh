@@ -1,6 +1,6 @@
 #!/bin/bash
 
-usage() { echo "Usage: $0 -u <username> -p <password>" 1>&2; exit 1; }
+usage() { echo "Usage: $0 -u <username> -p <password> -k <github username>" 1>&2; exit 1; }
 
 function checkerror() {
    
@@ -14,18 +14,22 @@ get_home() {
 
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 
-while getopts "u:p:" flag; do
+while getopts "u:p:k:" flag; do
     case "${flag}" in
         u) username=${OPTARG};;
         p) password=${OPTARG};;
+        k) githubuser=${OPTARG};;
         *) usage ;;
     esac
 done
 
-if [ -z "${username}" ] || [ -z "${password}" ]; then
+if [ -z "${githubuser}" ] || [ -z "${username}" ] || [ -z "${password}" ]; then
     usage
 fi
 
+echo "Testing keys for github user $githubuser"
+wget --delete-after --no-cache https://github.com/${githubuser}.keys
+checkerror $?
 
 # create user
 echo "Creating user $username"
@@ -50,7 +54,7 @@ mkdir $HOMEDIR/.ssh
 checkerror $?
 
 echo "downloading ssh keys"
-wget -O$HOMEDIR/.ssh/authorized_keys https://github.com/mnbf9rca.keys
+wget -O$HOMEDIR/.ssh/authorized_keys --no-cache https://github.com/${githubuser}.keys
 checkerror $?
 
 echo "... key saved"
