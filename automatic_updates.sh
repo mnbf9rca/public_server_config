@@ -5,6 +5,14 @@ function checkerror() {
    [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
 }
 
+function backupfile() {
+   file=$1
+   dt=$(date '+%Y%m%d%H%M%S');
+   echo "File $file already exists! backing up to ~/$file-$dt"
+   cp -f -v '$file' '~/$file-$dt'
+   checkerror $?
+}
+
 if [[ $(id -u) -ne 0 ]] ; then echo "Please run as root" ; exit 1 ; fi
 
 # install automatic updates
@@ -14,11 +22,10 @@ apt update
 checkerror $?
 apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 checkerror $?
-echo ... creating config file
+echo ... creating schedule config file
 configfile="/etc/apt/apt.conf.d/10periodic"
 if [ -e $configfile ]; then
-  echo "File $configfile already exists! backing up"
-  cp -f -v $configfile $configfile.bak
+   backupfile $configfile
 else
   cat > $configfile <<EOF
 APT::Periodic::Update-Package-Lists "1";
@@ -38,5 +45,19 @@ sed -i 's|^//[ \t]*Unattended-Upgrade::Remove-Unused-Dependencies \"false\";|Una
 checkerror $?
 sed -i 's|^//[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"false\";|Unattended-Upgrade::AutoFixInterruptedDpkg \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
+
+echo ... enabling
+configfile="/etc/apt/apt.conf.d/20auto-upgrades"
+if [ -e $configfile ]; then
+  backupfile $configfile
+else
+  cat > $configfile <<EOF
+// from https://wiki.debian.org/UnattendedUpgrades
+// most config in 10periodic
+// Enable the update/upgrade script (0=disable)
+APT::Periodic::Enable "1"
+EOF
+checkerror $?
+fi
 
 echo ... automatic upgrades configured
