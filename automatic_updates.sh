@@ -17,7 +17,8 @@ checkerror $?
 echo ... creating config file
 configfile="/etc/apt/apt.conf.d/10periodic"
 if [ -e $configfile ]; then
-  echo "File $configfile already exists! Skipping..."
+  echo "File $configfile already exists! backing up"
+  cp -f -v $configfile $configfile.bak
 else
   cat > $configfile <<EOF
 APT::Periodic::Update-Package-Lists "1";
