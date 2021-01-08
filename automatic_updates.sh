@@ -6,10 +6,11 @@ function checkerror() {
 }
 
 function backupfile() {
-   file=$1
-   dt=$(date '+%Y%m%d%H%M%S');
-   echo "File $file already exists! backing up to ~/$file-$dt"
-   cp -f -v '$file' '~/$file-$dt'
+   pathname=$1
+   file=${pathname##*/}
+   dt=$(date '+%Y%m%d-%H%M%S');
+   echo "File $pathname already exists! backing up to $HOME/$file-$dt"
+   cp -f -v $pathname $HOME/$file-$dt
    checkerror $?
 }
 
