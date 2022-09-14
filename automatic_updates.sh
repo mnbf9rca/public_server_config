@@ -23,7 +23,7 @@ apt update
 checkerror $?
 apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 // need to run dpkg-reconfigure exim4-config to set as 'internet site'
-// and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and always mail
+// and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and Unattended-Upgrade::MailReport "always";
 checkerror $?
 echo ... creating schedule config file
 configfile="/etc/apt/apt.conf.d/10periodic"
