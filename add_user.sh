@@ -50,7 +50,7 @@ adduser --gecos "" --disabled-password $username
 checkerror $?
 
 echo "setting password"
-echo "$username":"$password" | chpasswd -e
+echo "$username":"$password" | chpasswd 
 checkerror $?
 
 echo "Adding $username to sudo group"
