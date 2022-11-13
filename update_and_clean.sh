@@ -29,4 +29,7 @@ echo "installing other apps"
 apt install -y nano curl
 checkerror $?
 
+# sudo no password
+echo "%sudo ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 echo "remember to set up UFW"
