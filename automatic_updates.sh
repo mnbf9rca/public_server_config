@@ -59,9 +59,13 @@ else
 // from https://wiki.debian.org/UnattendedUpgrades
 // most config in 10periodic
 // Enable the update/upgrade script (0=disable)
-APT::Periodic::Enable "1"
+APT::Periodic::Enable "1";
 EOF
 checkerror $?
 fi
+
+# check if it's all ok
+unattended-upgrade --dry-run --verbose
+checkerror $?
 
 echo ... automatic upgrades configured
