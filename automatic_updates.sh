@@ -22,9 +22,9 @@ echo "... installing"
 apt update
 checkerror $?
 apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
-// need to run dpkg-reconfigure exim4-config to set as 'internet site'
-// and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and Unattended-Upgrade::MailReport "always";
-// in /etc/apt/apt.conf.d/50unattended-upgrades
+# need to run dpkg-reconfigure exim4-config to set as 'internet site'
+# and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and Unattended-Upgrade::MailReport "always";
+# in /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 echo ... creating schedule config file
 configfile="/etc/apt/apt.conf.d/10periodic"
