@@ -68,7 +68,7 @@ sed -i 's|^//[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"false\";|Unatten
 checkerror $?
 
 # if $email_address is not empty then set it
-if [ -z "${email_address}" ]; then
+if [ ! -z "${email_address}" ]; then
   echo ... setting email address
   sed -i 's|^//[ \t]*Unattended-Upgrade::MailReport \"on-change\";|Unattended-Upgrade::MailReport \"always\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
