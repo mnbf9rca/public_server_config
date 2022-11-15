@@ -26,7 +26,7 @@ checkerror $?
 
 # install other useful apps
 echo "installing other apps"
-apt install -y nano curl
+apt install -y nano curl qemu-guest-agent
 checkerror $?
 
 # sudo no password
