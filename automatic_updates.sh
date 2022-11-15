@@ -4,8 +4,8 @@
 if [ ! $# -eq 0 ]; then
   # if so, check the email address is valid
   if [[ $1 =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+    email_address = "$1"
     echo "Valid email address: $email_address"
-    $email_address = $1
   else
     echo "Email address $email_address is invalid - expect something like x@x.xx"
     exit 1
