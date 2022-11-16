@@ -3,11 +3,11 @@
 # check if there is an argument
 if [ ! $# -eq 0 ]; then
   # if so, check the email address is valid
-  if [[ $1 =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
-    email_address = "$1"
-    echo "Valid email address: $email_address"
+  EMAIL_ADDRESS="$1"
+  if [[ $EMAIL_ADDRESS =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+    echo "Valid email address: $EMAIL_ADDRESS"
   else
-    echo "Email address $email_address is invalid - expect something like x@x.xx"
+    echo "Email address $EMAIL_ADDRESS is invalid - expect something like x@x.xx"
     exit 1
   fi
 fi
@@ -67,12 +67,12 @@ checkerror $?
 sed -i 's|^//[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"false\";|Unattended-Upgrade::AutoFixInterruptedDpkg \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 
-# if $email_address is not empty then set it
-if [ ! -z "${email_address}" ]; then
+# if $EMAIL_ADDRESS is not empty then set it
+if [ ! -z "${EMAIL_ADDRESS}" ]; then
   echo ... setting email address
   sed -i 's|^//[ \t]*Unattended-Upgrade::MailReport \"on-change\";|Unattended-Upgrade::MailReport \"always\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
-  sed -i "s|^//[ \t]*Unattended-Upgrade::Mail \"\";|Unattended-Upgrade::Mail \"$email_address\";|g" /etc/apt/apt.conf.d/50unattended-upgrades
+  sed -i "s|^//[ \t]*Unattended-Upgrade::Mail \"\";|Unattended-Upgrade::Mail \"$EMAIL_ADDRESS\";|g" /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
 fi
 
