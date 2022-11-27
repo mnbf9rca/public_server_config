@@ -10,6 +10,10 @@ if [ ! $# -eq 0 ]; then
     echo "Email address $EMAIL_ADDRESS is invalid - expect something like x@x.xx"
     exit 1
   fi
+else
+  # if not, exit
+  echo "No email address provided for automatic update notifications"
+  exit 1
 fi
 
 function checkerror() {
@@ -57,22 +61,40 @@ EOF
   checkerror $?
 fi
 
-echo ... setting timing
-sed -i 's|^//[ \t]\"\${distro_id}:\${distro_codename}-updates\"|"\${distro_id}:\${distro_codename}-updates\"|g' /etc/apt/apt.conf.d/50unattended-upgrades
+echo ... adding debian updates to sources
+sed -i 's|^[\/]\{0,2\}[ \t]*\"origin=Debian,codename=\${distro_codename}-updates\";|\"origin=Debian,codename=\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
-sed -i 's|^//[ \t]*Unattended-Upgrade::Automatic-Reboot \"false\";|Unattended-Upgrade::Automatic-Reboot \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+
+# check if /etc/apt/apt.conf.d/50unattended-upgrades contains "origin=Proxmox,codename=\${distro_codename}" on a line by itself
+# if not, add it
+if ! grep -q "origin=Proxmox,codename=\${distro_codename}" /etc/apt/apt.conf.d/50unattended-upgrades; then
+  echo ... adding Proxmox to sources
+  sed -i 's|^Unattended-Upgrade::Origins-Pattern {|Unattended-Upgrade::Origins-Pattern {\n"origin=Proxmox,codename=\${distro_codename}";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+  checkerror $?
+else
+  echo ... Proxmox already in sources
+  echo ... ensuring proxmox source is enabled
+  sed -i 's|^[\/]\{0,2\}[ \t]*\"origin=Proxmox,codename=\${distro_codename}";|\"origin=Proxmox,codename=\${distro_codename}";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+fi
+
+echo ... setting automatic reboot
+sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::Automatic-Reboot \"*.\";|Unattended-Upgrade::Automatic-Reboot \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
-sed -i 's|^//[ \t]*Unattended-Upgrade::Remove-Unused-Dependencies \"false\";|Unattended-Upgrade::Remove-Unused-Dependencies   \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+echo ... setting remove Dependencies
+sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::Remove-Unused-Dependencies \"*.\";|Unattended-Upgrade::Remove-Unused-Dependencies \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
-sed -i 's|^//[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"false\";|Unattended-Upgrade::AutoFixInterruptedDpkg \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+echo ... setting automatic fix interrupted packages
+sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"*.\";|Unattended-Upgrade::AutoFixInterruptedDpkg \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 
 # if $EMAIL_ADDRESS is not empty then set it
 if [ ! -z "${EMAIL_ADDRESS}" ]; then
-  echo ... setting email address
-  sed -i 's|^//[ \t]*Unattended-Upgrade::MailReport \"on-change\";|Unattended-Upgrade::MailReport \"always\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+  echo ... setting email notificaiton to always
+  # sed command to match [\/]{0,2}[ \t]*Unattended-Upgrade::MailReport \".*\";\n and replace it with Unattended-Upgrade::MailReport "always"\n
+  sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::MailReport \".*\";|Unattended-Upgrade::MailReport "always";|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
-  sed -i "s|^//[ \t]*Unattended-Upgrade::Mail \"\";|Unattended-Upgrade::Mail \"$EMAIL_ADDRESS\";|g" /etc/apt/apt.conf.d/50unattended-upgrades
+  echo ... setting email address
+  sed -i "s|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::Mail \"\";|Unattended-Upgrade::Mail \"$EMAIL_ADDRESS\";|g" /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
 fi
 
