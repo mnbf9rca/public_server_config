@@ -40,7 +40,7 @@ fi
 # install automatic updates
 echo "enable auto updates"
 echo "... installing"
-apt update
+DEBIAN_FRONTEND=noninteractive apt update
 checkerror $?
 DEBIAN_FRONTEND=noninteractive apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 # need to run dpkg-reconfigure exim4-config to set as 'internet site'
