@@ -63,7 +63,6 @@ fi
 
 echo ... adding debian updates to sources
 sed -i 's|^[\/]\{0,2\}[ \t]*\"origin=Debian,codename=\${distro_codename}-updates\";|\"origin=Debian,codename=\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
-//      "${distro_id}:${distro_codename}-updates";
 checkerror $?
 sed -i 's|^[\/]\{0,2\}[ \t]*\"\${distro_id}:\${distro_codename}-updates\";|\"\${distro_id}:\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
@@ -80,7 +79,7 @@ elif grep -q -E "^[\/]{2}[ \t]*Unattended-Upgrade::Origins-Pattern {" /etc/apt/a
 elif grep -q "Unattended-Upgrade::Allowed-Origins" /etc/apt/apt.conf.d/50unattended-upgrades; then
   echo ... Unattended-Upgrade::Origins-Pattern does not exist
   echo ... Unattended-Upgrade::Allowed-Origins does exist
-  echo ... changing Unattended-Upgrade::Allowed-Origins to Unattended-Upgrade::Origins-Pattern
+  echo ... adding Unattended-Upgrade::Origins-Pattern just above Unattended-Upgrade::Allowed-Origins
   sed -i 's|^Unattended-Upgrade::Allowed-Origins {|Unattended-Upgrade::Origins-Pattern {\n}\nUnattended-Upgrade::Allowed-Origins {|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
 else
