@@ -63,6 +63,9 @@ fi
 
 echo ... adding debian updates to sources
 sed -i 's|^[\/]\{0,2\}[ \t]*\"origin=Debian,codename=\${distro_codename}-updates\";|\"origin=Debian,codename=\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+//      "${distro_id}:${distro_codename}-updates";
+checkerror $?
+sed -i 's|^[\/]\{0,2\}[ \t]*\"\${distro_id}:\${distro_codename}-updates\";|\"\${distro_id}:\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 
 # check if /etc/apt/apt.conf.d/50unattended-upgrades contains "origin=Proxmox,codename=\${distro_codename}" on a line by itself
