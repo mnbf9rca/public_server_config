@@ -68,16 +68,44 @@ checkerror $?
 sed -i 's|^[\/]\{0,2\}[ \t]*\"\${distro_id}:\${distro_codename}-updates\";|\"\${distro_id}:\${distro_codename}-updates\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 
-# check if /etc/apt/apt.conf.d/50unattended-upgrades contains "origin=Proxmox,codename=\${distro_codename}" on a line by itself
+# check if /etc/apt/apt.conf.d/50unattended-upgrades contains "Unattended-Upgrade::Origins-Pattern" anywhere
 # if not, add it
-if ! grep -q "origin=Proxmox,codename=\${distro_codename}" /etc/apt/apt.conf.d/50unattended-upgrades; then
-  echo ... adding Proxmox to sources
-  sed -i 's|^Unattended-Upgrade::Origins-Pattern {|Unattended-Upgrade::Origins-Pattern {\n"origin=Proxmox,codename=\${distro_codename}";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+if grep -q -E -E "^Unattended-Upgrade::Origins-Pattern {" /etc/apt/apt.conf.d/50unattended-upgrades; then
+  echo ... Unattended-Upgrade::Origins-Pattern exists and is not disabled
+elif grep -q -E "^[\/]{2}[ \t]*Unattended-Upgrade::Origins-Pattern {" /etc/apt/apt.conf.d/50unattended-upgrades; then
+  echo ... Unattended-Upgrade::Origins-Pattern exists but is disabled
+  echo ... can\'t automatically enable it
+  echo ... please enable it manually
+  exit 1
+elif grep -q "Unattended-Upgrade::Allowed-Origins" /etc/apt/apt.conf.d/50unattended-upgrades; then
+  echo ... Unattended-Upgrade::Origins-Pattern does not exist
+  echo ... Unattended-Upgrade::Allowed-Origins does exist
+  echo ... changing Unattended-Upgrade::Allowed-Origins to Unattended-Upgrade::Origins-Pattern
+  sed -i 's|^Unattended-Upgrade::Allowed-Origins {|Unattended-Upgrade::Origins-Pattern {\n}\nUnattended-Upgrade::Allowed-Origins {|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
 else
-  echo ... Proxmox already in sources
-  echo ... ensuring proxmox source is enabled
-  sed -i 's|^[\/]\{0,2\}[ \t]*\"origin=Proxmox,codename=\${distro_codename}";|\"origin=Proxmox,codename=\${distro_codename}";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+  echo ... Unable to find Unattended-Upgrade::Origins-Pattern or Unattended-Upgrade::Allowed-Origins
+  echo ... ending
+  exit 1
+fi
+
+# check for multiline regex "^Unattended-Upgrade::Origins-Pattern {[.\n]*\"origin=\*\"[.\n]*}" in /etc/apt/apt.conf.d/50unattended-upgrades
+# if not, add it
+if grep -Pzoq "Unattended-Upgrade::Origins-Pattern {[.\n]*\"origin=\*\"[.\n]*}" /etc/apt/apt.conf.d/50unattended-upgrades; then
+  echo ... \"origin=*\" already in sources
+  echo ... checking it\'s not disabled
+  if grep -Pzoq "Unattended-Upgrade::Origins-Pattern {[.\n]*[\/]{2}[ \t]*\"origin=\*\"[.\n]*}" /etc/apt/apt.conf.d/50unattended-upgrades; then
+    echo ... \"origin=*\" is disabled
+    echo ... enabling it
+    perl -pi -e '/Unattended-Upgrade::Origins-Pattern {/../}/ and s/[\/]{2}[ \t]*\"origin=\*\"/\"origin=\*\"/g' /etc/apt/apt.conf.d/50unattended-upgrades
+    checkerror $?
+  else
+    echo ... \"origin=*\" is enabled
+  fi
+else
+  echo ... adding \"origin=*\" to sources
+  sed -i 's|^Unattended-Upgrade::Origins-Pattern {|Unattended-Upgrade::Origins-Pattern {\n"origin=*";|g' /etc/apt/apt.conf.d/50unattended-upgrades
+  checkerror $?
 fi
 
 echo ... setting automatic reboot
