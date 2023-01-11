@@ -2,6 +2,11 @@
 
 usage() { echo "Usage: $0 -u <username> -k <github username>" 1>&2; exit 1; }
 
+get_home() {
+  local result; result="$(getent passwd "$1")" || return
+  echo $result | cut -d : -f 6
+}
+
 function checkerror() {
    
    [[ $1 -ne 0 ]] && { echo "... operation failed, error code {$1}"; exit 1 ; } 
