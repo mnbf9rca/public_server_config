@@ -49,6 +49,7 @@ fi
 echo "getting home dir for $username"
 HOMEDIR="$(get_home $username)"
 checkerror $?
+echo "home dir for $username is $HOMEDIR"
 
 # If folder $HOMEDIR/.ssh doesn't exist, create it
 if [ ! -d "$HOMEDIR/.ssh" ]; then
@@ -57,6 +58,8 @@ if [ ! -d "$HOMEDIR/.ssh" ]; then
     checkerror $?
 fi
 
+echo "installing ssh-key-sync"
+mkdir -p /opt/bin
 cp ./ssh-key-sync.sh /opt/bin/ssh-key-sync.sh
 checkerror $?
 chmod +x /opt/bin/ssh-key-sync.sh
