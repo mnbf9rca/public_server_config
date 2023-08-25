@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Validate email address
-if [[ ! "$1" =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
-  echo "Email address $1 is invalid - expect something like x@x.xx"
-  echo "Usage: $0 <email_address>"
-  exit 1
-fi
-EMAIL_ADDRESS="$1"
+# Function to validate email address
+function validate_email() {
+  if [[ ! "$1" =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+    echo "Email address $1 is invalid - expect something like x@x.xx"
+    exit 1
+  fi
+}
 
 # Error handling function
 function checkerror() {
@@ -30,6 +30,12 @@ function backupfile() {
 if [[ $(id -u) -ne 0 ]]; then
   echo "Please run as root"
   exit 1
+fi
+
+# Check if email address is provided and validate it
+if [ ! -z "$1" ]; then
+  validate_email "$1"
+  EMAIL_ADDRESS="$1"
 fi
 
 # Install automatic updates
@@ -114,9 +120,9 @@ echo ... setting automatic fix interrupted packages
 sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::AutoFixInterruptedDpkg \"*.\";|Unattended-Upgrade::AutoFixInterruptedDpkg \"true\";|g' /etc/apt/apt.conf.d/50unattended-upgrades
 checkerror $?
 
-# if $EMAIL_ADDRESS is not empty then set it
+# If email address is provided, set it
 if [ ! -z "${EMAIL_ADDRESS}" ]; then
-  echo ... setting email notificaiton to always
+  echo "... setting email notification to always"
   # sed command to match [\/]{0,2}[ \t]*Unattended-Upgrade::MailReport \".*\";\n and replace it with Unattended-Upgrade::MailReport "always"\n
   sed -i 's|^[\/]\{0,2\}[ \t]*Unattended-Upgrade::MailReport \".*\";|Unattended-Upgrade::MailReport "always";|g' /etc/apt/apt.conf.d/50unattended-upgrades
   checkerror $?
