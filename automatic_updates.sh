@@ -1,21 +1,14 @@
 #!/bin/bash
 
-# check if there is an argument
-if [ ! $# -eq 0 ]; then
-  # if so, check the email address is valid
-  EMAIL_ADDRESS="$1"
-  if [[ $EMAIL_ADDRESS =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
-    echo "Valid email address: $EMAIL_ADDRESS"
-  else
-    echo "Email address $EMAIL_ADDRESS is invalid - expect something like x@x.xx"
-    exit 1
-  fi
-else
-  # if not, exit
-  echo "No email address provided for automatic update notifications"
+# Validate email address
+if [[ ! "$1" =~ [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+  echo "Email address $1 is invalid - expect something like x@x.xx"
+  echo "Usage: $0 <email_address>"
   exit 1
 fi
+EMAIL_ADDRESS="$1"
 
+# Error handling function
 function checkerror() {
   [[ $1 -ne 0 ]] && {
     echo "... operation failed, error code {$1}"
@@ -23,30 +16,34 @@ function checkerror() {
   }
 }
 
+# Backup file function
 function backupfile() {
-  pathname=$1
+  pathname="$1"
   file=${pathname##*/}
   dt=$(date '+%Y%m%d-%H%M%S')
-  echo "File $pathname already exists! backing up to $HOME/$file-$dt"
-  cp -f -v $pathname $HOME/$file-$dt
+  echo "File $pathname already exists! Backing up to $HOME/$file-$dt"
+  cp -f -v "$pathname" "$HOME/$file-$dt"
   checkerror $?
 }
 
+# Check if script is run as root
 if [[ $(id -u) -ne 0 ]]; then
   echo "Please run as root"
   exit 1
 fi
 
-# install automatic updates
-echo "enable auto updates"
-echo "... installing"
+# Install automatic updates
+echo "Enabling automatic updates..."
 DEBIAN_FRONTEND=noninteractive apt update
 checkerror $?
 DEBIAN_FRONTEND=noninteractive apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
+checkerror $?
+
+# Configuration file updates
 # need to run dpkg-reconfigure exim4-config to set as 'internet site'
 # and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and Unattended-Upgrade::MailReport "always";
 # in /etc/apt/apt.conf.d/50unattended-upgrades
-checkerror $?
+# checkerror $?
 echo ... creating schedule config file
 configfile="/etc/apt/apt.conf.d/10periodic"
 if [ -e $configfile ]; then
@@ -142,8 +139,8 @@ EOF
   checkerror $?
 fi
 
-# check if it's all ok
+# Check if all configurations are OK
 unattended-upgrade --verbose
 checkerror $?
 
-echo ... automatic upgrades configured
+echo "... automatic upgrades configured"
