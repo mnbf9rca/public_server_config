@@ -17,16 +17,16 @@ apt purge -y snapd
 checkerror $?
 
 echo "updating the rest"
-apt dist-upgrade --autoremove --no-install-recommends --assume-yes
+DEBIAN_FRONTEND=noninteractive apt dist-upgrade --autoremove --no-install-recommends --assume-yes
 checkerror $?
 
 echo "checking no dangling versions left"
-apt autoremove --assume-yes
+DEBIAN_FRONTEND=noninteractive apt autoremove --assume-yes
 checkerror $?
 
 # install other useful apps
 echo "installing other apps"
-apt install -y nano curl qemu-guest-agent
+DEBIAN_FRONTEND=noninteractive apt install -y nano curl qemu-guest-agent
 checkerror $?
 
 # sudo no password
