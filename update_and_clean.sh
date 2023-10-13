@@ -12,9 +12,9 @@ echo "Updating catalogue..."
 apt update
 checkerror $?
 
-echo "Removing snap"
-apt purge -y snapd
-checkerror $?
+#echo "Removing snap"
+#apt purge -y snapd
+#checkerror $?
 
 echo "updating the rest"
 DEBIAN_FRONTEND=noninteractive apt dist-upgrade --autoremove --no-install-recommends --assume-yes
