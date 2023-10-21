@@ -7,10 +7,10 @@ DATE_SUFFIX=$(date +%F)
 BACKUP_FILE="$BACKUP_DIR/tsdb_backup_$DATE_SUFFIX.sql"
 ZIP_FILE="$BACKUP_DIR/tsdb_backup_$DATE_SUFFIX.zip"
 LOG_FILE="$BACKUP_DIR/tsdb_backup_log_$DATE_SUFFIX.txt"
-S3_BUCKET="s3://bucket"
-HEALTHCHECK_URL="https://hc-ping.com/slug"
+S3_BUCKET="s3://pg.cynexia.net-backup"
+HEALTHCHECK_URL="https://hc-ping.com/1cf97622-ec87-486e-9cad-dd9598bef64a"
 PG_BACKUP_USER="backup_user"
-PG_PORT="<port>"
+PG_PORT="31432"
 RETAIN_BACKUPS_AWS=7  # Number of backups to retain in AWS
 RETAIN_BACKUPS_LOCAL=1 # Number of backups to retain locally
 
@@ -23,12 +23,13 @@ send_log() {
     curl -fsS --retry 3 -m 10 -X POST -H "Content-Type: text/plain" --data-binary "@$LOG_FILE" "$url"
 }
 
-# Check Database Integrity
+# back up database
 pg_dump -U $PG_BACKUP_USER -h localhost -p $PG_PORT tsdb -f "$BACKUP_FILE" || {
     send_log "$HEALTHCHECK_URL/fail"
     exit 1
 }
 
+# zip backup
 zip -9 "$ZIP_FILE" "$BACKUP_FILE" || {
     send_log "$HEALTHCHECK_URL/fail"
     exit 1
