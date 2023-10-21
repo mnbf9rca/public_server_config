@@ -5,6 +5,7 @@
 BACKUP_DIR="/backup"
 DATE_SUFFIX=$(date +%F)
 BACKUP_FILE="$BACKUP_DIR/tsdb_backup_$DATE_SUFFIX.sql"
+ZIP_FILE="$BACKUP_DIR/tsdb_backup_$DATE_SUFFIX.zip"
 LOG_FILE="$BACKUP_DIR/tsdb_backup_log_$DATE_SUFFIX.txt"
 S3_BUCKET="s3://bucket"
 HEALTHCHECK_URL="https://hc-ping.com/slug"
@@ -28,12 +29,18 @@ pg_dump -U $PG_BACKUP_USER -h localhost -p $PG_PORT tsdb -f "$BACKUP_FILE" || {
     exit 1
 }
 
+zip -9 "$ZIP_FILE" "$BACKUP_FILE" || {
+    send_log "$HEALTHCHECK_URL/fail"
+    exit 1
+}
+
 # Delete all but the most recent $RETAIN_BACKUPS_LOCAL backups and logs in BACKUP_DIR
 find "$BACKUP_DIR" -type f -name 'tsdb_backup_*.sql' | sort | head -n -"$RETAIN_BACKUPS_LOCAL" | xargs rm -f
+find "$BACKUP_DIR" -type f -name 'tsdb_backup_*.zip' | sort | head -n -"$RETAIN_BACKUPS_LOCAL" | xargs rm -f
 find "$BACKUP_DIR" -type f -name 'tsdb_backup_log_*.txt' | sort | head -n -"$RETAIN_BACKUPS_LOCAL" | xargs rm -f
 
 # Upload to AWS S3
-aws s3 cp "$BACKUP_FILE" "$S3_BUCKET" --no-progress || {
+aws s3 cp "$ZIP_FILE" "$S3_BUCKET" --no-progress || {
     send_log "$HEALTHCHECK_URL/fail"
     exit 1
 }
