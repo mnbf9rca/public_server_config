@@ -26,7 +26,7 @@ checkerror $?
 
 # install other useful apps
 echo "installing other apps"
-DEBIAN_FRONTEND=noninteractive apt install -y nano curl qemu-guest-agent
+DEBIAN_FRONTEND=noninteractive apt install -y nano curl iputils-ping qemu-guest-agent
 checkerror $?
 
 # sudo no password
