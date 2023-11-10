@@ -18,5 +18,11 @@ ufw allow out 80/tcp
 ufw allow out 443/tcp
 ufw allow out 53
 
+# block loopback
+ufw allow in on lo
+ufw allow out on lo
+ufw deny in from 127.0.0.0/8
+ufw deny in from ::1
+
 # Enable UFW
 echo 'y' | ufw enable
