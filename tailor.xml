@@ -310,8 +310,12 @@
     <select idref="xccdf_org.ssgproject.content_rule_file_ownership_audit_binaries" selected="true"/>
     <!--4.1.4.10 Ensure audit tools belong to group root (Automated)-->
     <select idref="xccdf_org.ssgproject.content_rule_file_groupownership_audit_binaries" selected="true"/>
+
+    <!-- differs from standard -->
     <!--4.1.4.11 Ensure cryptographic mechanisms are used to protect the integrity of audit tools (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_aide_check_audit_tools" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_aide_check_audit_tools" selected="false"/>
+    <!-- differs from standard -->
+
     <!--4.2.1.1.1 Ensure systemd-journal-remote is installed (Automated)-->
     <select idref="xccdf_org.ssgproject.content_rule_package_systemd-journal-remote_installed" selected="true"/>
     <!--4.2.1.1.4 Ensure journald is not configured to receive logs from a remote client (Automated)-->
@@ -322,16 +326,20 @@
     <select idref="xccdf_org.ssgproject.content_rule_journald_compress" selected="true"/>
     <!--4.2.1.4 Ensure journald is configured to write logfiles to persistent disk (Automated)-->
     <select idref="xccdf_org.ssgproject.content_rule_journald_storage" selected="true"/>
+
+    <!-- differs from standard -->
     <!--4.2.2.1 Ensure rsyslog is installed (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_package_rsyslog_installed" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_package_rsyslog_installed" selected="false"/>
     <!--4.2.2.2 Ensure rsyslog service is enabled (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_service_rsyslog_enabled" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_service_rsyslog_enabled" selected="false"/>
     <!--4.2.2.4 Ensure rsyslog default file permissions are configured (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_filecreatemode" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_filecreatemode" selected="false"/>
     <!--4.2.2.6 Ensure rsyslog is configured to send logs to a remote log host (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_remote_loghost" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_remote_loghost" selected="false"/>
     <!--4.2.2.7 Ensure rsyslog is not configured to receive logs from a remote client (Automated)-->
-    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_nolisten" selected="true"/>
+    <select idref="xccdf_org.ssgproject.content_rule_rsyslog_nolisten" selected="false"/>
+    <!-- differs from standard -->
+
     <!--4.2.3 Ensure all logfiles have appropriate permissions and ownership (Automated)-->
     <select idref="xccdf_org.ssgproject.content_rule_permissions_local_var_log" selected="true"/>
     <!--5.1.1 Ensure cron daemon is enabled and running (Automated)-->
