@@ -11,7 +11,7 @@ ufw default deny incoming
 ufw default deny outgoing
 
 # Allow outbound DNS for systemd-resolved
-ufw allow out to 127.0.0.53 port dns
+ufw allow out to 127.0.0.53 port 53
 
 # Allow outbound HTTP, HTTPS, NTP, DNS
 ufw allow out http
