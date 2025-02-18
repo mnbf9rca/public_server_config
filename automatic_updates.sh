@@ -54,24 +54,21 @@ checkerror $?
 
 # Pre-seed Exim configuration
 echo "... configuring exim4"
-debconf-set-selections <<EOF
-exim4-config exim4/dc_eximconfig_configtype select internet site; mail is sent and received directly using SMTP
-exim4-config exim4/dc_local_interfaces string 127.0.0.1 ; ::1
-exim4-config exim4/dc_other_hostnames string $HOSTNAME
-exim4-config exim4/dc_readhost string
-exim4-config exim4/dc_relay_domains string
-exim4-config exim4/dc_relay_nets string
-exim4-config exim4/dc_smarthost string
-exim4-config exim4/mailname string $HOSTNAME
-exim4-config exim4/use_split_config boolean false
-EOF
+sed -i 's/^dc_eximconfig_configtype=.*/dc_eximconfig_configtype="internet"/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_local_interfaces=.*/dc_local_interfaces="127.0.0.1 ; ::1"/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_other_hostnames=.*/dc_other_hostnames="'$HOSTNAME'"/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_readhost=.*/dc_readhost=""/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_relay_domains=.*/dc_relay_domains=""/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_relay_nets=.*/dc_relay_nets=""/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_smarthost=.*/dc_smarthost=""/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_mailname=.*/dc_mailname="'$HOSTNAME'"/' /etc/exim4/update-exim4.conf.conf
+sed -i 's/^dc_use_split_config=.*/dc_use_split_config="false"/' /etc/exim4/update-exim4.conf.conf
 
-# Apply the configuration
-dpkg-reconfigure -plow exim4-config
-checkerror $?
 
 # Update Exim configuration
 update-exim4.conf
+checkerror $?
+systemctl restart exim4
 checkerror $?
 
 
