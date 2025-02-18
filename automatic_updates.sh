@@ -47,17 +47,31 @@ checkerror $?
 
 # Configuration file updates
 # need to run dpkg-reconfigure exim4-config to set as 'internet site'
+# Force clear old Exim configuration settings
+echo "... resetting Exim configuration"
+echo "PURGE" | debconf-communicate exim4-config
+checkerror $?
+
+# Pre-seed Exim configuration
 echo "... configuring exim4"
-debconf-set-selections <<< "exim4-config exim4/dc_eximconfig_configtype select internet site; mail is sent and received directly using SMTP"
-debconf-set-selections <<< "exim4-config exim4/dc_local_interfaces select 127.0.0.1 ; ::1"
-debconf-set-selections <<< "exim4-config exim4/dc_other_hostnames select $HOSTNAME"
-debconf-set-selections <<< "exim4-config exim4/dc_readhost select"
-debconf-set-selections <<< "exim4-config exim4/dc_relay_domains select"
-debconf-set-selections <<< "exim4-config exim4/dc_relay_nets select"
-debconf-set-selections <<< "exim4-config exim4/dc_smarthost select"
-debconf-set-selections <<< "exim4-config exim4/mailname select $HOSTNAME"
-debconf-set-selections <<< "exim4-config exim4/use_split_config select false"
-dpkg-reconfigure -f noninteractive exim4-config
+debconf-set-selections <<EOF
+exim4-config exim4/dc_eximconfig_configtype select internet
+exim4-config exim4/dc_local_interfaces string 127.0.0.1 ; ::1
+exim4-config exim4/dc_other_hostnames string $HOSTNAME
+exim4-config exim4/dc_readhost string
+exim4-config exim4/dc_relay_domains string
+exim4-config exim4/dc_relay_nets string
+exim4-config exim4/dc_smarthost string
+exim4-config exim4/mailname string $HOSTNAME
+exim4-config exim4/use_split_config boolean false
+EOF
+
+# Apply the configuration
+dpkg-reconfigure -plow exim4-config
+checkerror $?
+
+# Update Exim configuration
+update-exim4.conf
 checkerror $?
 
 
