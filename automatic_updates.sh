@@ -47,6 +47,21 @@ checkerror $?
 
 # Configuration file updates
 # need to run dpkg-reconfigure exim4-config to set as 'internet site'
+echo "... configuring exim4"
+debconf-set-selections <<< "exim4-config exim4/dc_eximconfig_configtype select internet site; mail is sent and received directly using SMTP"
+debconf-set-selections <<< "exim4-config exim4/dc_local_interfaces select 127.0.0.1 ; ::1"
+debconf-set-selections <<< "exim4-config exim4/dc_other_hostnames select $HOSTNAME"
+debconf-set-selections <<< "exim4-config exim4/dc_readhost select"
+debconf-set-selections <<< "exim4-config exim4/dc_relay_domains select"
+debconf-set-selections <<< "exim4-config exim4/dc_relay_nets select"
+debconf-set-selections <<< "exim4-config exim4/dc_smarthost select"
+debconf-set-selections <<< "exim4-config exim4/mailname select $HOSTNAME"
+debconf-set-selections <<< "exim4-config exim4/use_split_config select false"
+dpkg-reconfigure -f noninteractive exim4-config
+checkerror $?
+
+
+
 # and if using healthchecks then also Unattended-Upgrade::Mail "your@email.com"; and Unattended-Upgrade::MailReport "always";
 # in /etc/apt/apt.conf.d/50unattended-upgrades
 # checkerror $?
