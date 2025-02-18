@@ -55,7 +55,7 @@ checkerror $?
 # Pre-seed Exim configuration
 echo "... configuring exim4"
 debconf-set-selections <<EOF
-exim4-config exim4/dc_eximconfig_configtype select internet
+exim4-config exim4/dc_eximconfig_configtype select internet site; mail is sent and received directly using SMTP
 exim4-config exim4/dc_local_interfaces string 127.0.0.1 ; ::1
 exim4-config exim4/dc_other_hostnames string $HOSTNAME
 exim4-config exim4/dc_readhost string
