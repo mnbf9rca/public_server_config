@@ -54,6 +54,11 @@ checkerror $?
 
 # Exim configuration
 echo "... configuring exim4"
+configfile="/etc/exim4/update-exim4.conf.conf"
+if [ -e $configfile ]; then
+  backupfile $configfile
+else
+
 sed -i 's/^dc_eximconfig_configtype=.*/dc_eximconfig_configtype="internet"/' /etc/exim4/update-exim4.conf.conf
 sed -i 's/^dc_local_interfaces=.*/dc_local_interfaces="127.0.0.1 ; ::1"/' /etc/exim4/update-exim4.conf.conf
 sed -i 's/^dc_mailname=.*/dc_mailname="cynexia.net"/' /etc/exim4/update-exim4.conf.conf
@@ -64,6 +69,10 @@ sed -i 's/^dc_relay_nets=.*/dc_relay_nets=""/' /etc/exim4/update-exim4.conf.conf
 sed -i 's/^dc_smarthost=.*/dc_smarthost=""/' /etc/exim4/update-exim4.conf.conf
 sed -i 's/^dc_use_split_config=.*/dc_use_split_config="false"/' /etc/exim4/update-exim4.conf.conf
 # set from address
+configfile="/etc/exim4/exim4.conf.localmacros"
+if [ -e $configfile ]; then
+  backupfile $configfile
+else
 sed -i '/^MAIN_REWRITE=/d' /etc/exim4/exim4.conf.localmacros
 echo "MAIN_REWRITE=\"*@* ${HOSTNAME}@cynexia.net Ff\"" >> /etc/exim4/exim4.conf.localmacros
 checkerror $?
