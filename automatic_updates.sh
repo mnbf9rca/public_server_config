@@ -57,7 +57,7 @@ echo "... configuring exim4"
 configfile="/etc/exim4/update-exim4.conf.conf"
 if [ -e $configfile ]; then
   backupfile $configfile
-else
+fi
 
 sed -i 's/^dc_eximconfig_configtype=.*/dc_eximconfig_configtype="internet"/' /etc/exim4/update-exim4.conf.conf
 sed -i 's/^dc_local_interfaces=.*/dc_local_interfaces="127.0.0.1 ; ::1"/' /etc/exim4/update-exim4.conf.conf
@@ -72,7 +72,7 @@ sed -i 's/^dc_use_split_config=.*/dc_use_split_config="false"/' /etc/exim4/updat
 configfile="/etc/exim4/exim4.conf.localmacros"
 if [ -e $configfile ]; then
   backupfile $configfile
-else
+fi
 sed -i '/^MAIN_REWRITE=/d' /etc/exim4/exim4.conf.localmacros
 echo "MAIN_REWRITE=\"*@* ${HOSTNAME}@cynexia.net Ff\"" >> /etc/exim4/exim4.conf.localmacros
 checkerror $?
