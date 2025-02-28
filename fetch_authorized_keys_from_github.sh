@@ -13,8 +13,8 @@ function checkerror() {
   }
 }
 
-if [[ $(id -u) -ne 0 ]]; then
-  echo "Please run as root"
+if [[ $(id -u) -eq 0 ]]; then
+  echo "Please run as normal user, not as root"
   exit 1
 fi
 
