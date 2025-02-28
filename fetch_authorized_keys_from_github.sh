@@ -93,14 +93,14 @@ echo "... key secured"
 echo "Enabling cert auth"
 # Create backup with timestamp
 timestamp=$(date '+%Y%m%d_%H%M%S')
-cp /etc/ssh/sshd_config "/etc/ssh/sshd_config.backup_${timestamp}"
-chmod 600 "/etc/ssh/sshd_config.backup_${timestamp}"
+sudo cp /etc/ssh/sshd_config "/etc/ssh/sshd_config.backup_${timestamp}"
+sudo chmod 600 "/etc/ssh/sshd_config.backup_${timestamp}"
 checkerror $?
 
-sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
+sudo sed -i 's|[#]*ChallengeResponseAuthentication yes|ChallengeResponseAuthentication no|g' /etc/ssh/sshd_config
 checkerror $?
 
-sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
+sudo sed -i 's|[#]*PubkeyAuthentication no|PubkeyAuthentication yes|g' /etc/ssh/sshd_config
 checkerror $?
 
 # echo "Disabling password auth"
@@ -110,9 +110,9 @@ checkerror $?
 echo "Reloading sshd"
 if ! command -v systemctl >/dev/null 2>&1; then
   echo "systemctl not found. Using service command..."
-  service sshd reload
+  sudo service sshd reload
 else
-  systemctl reload sshd
+  sudo systemctl reload sshd
 fi
 checkerror $?
 
