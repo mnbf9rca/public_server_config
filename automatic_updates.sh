@@ -45,6 +45,18 @@ checkerror $?
 DEBIAN_FRONTEND=noninteractive apt install -y unattended-upgrades apt-transport-https ca-certificates apt-listchanges bsd-mailx
 checkerror $?
 
+# Install Exim4 if not present
+echo "... installing exim4"
+DEBIAN_FRONTEND=noninteractive apt install -y exim4
+checkerror $?
+
+# Remove Postfix if present to avoid conflicts
+if dpkg -l | grep -q postfix; then
+    echo "... removing postfix"
+    DEBIAN_FRONTEND=noninteractive apt remove -y postfix
+    checkerror $?
+fi
+
 # Configuration file updates
 # need to run dpkg-reconfigure exim4-config to set as 'internet site'
 # Force clear old Exim configuration settings
