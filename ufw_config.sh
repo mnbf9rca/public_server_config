@@ -16,7 +16,7 @@ ufw allow out to 127.0.0.53 port 53
 # Allow outbound HTTP, HTTPS, NTP, DNS
 ufw allow out http
 ufw allow out https
-ufw allow out dns
+ufw allow out 53
 ufw allow out ntp
 
 # block loopback
